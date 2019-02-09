@@ -27,7 +27,4 @@ class ProfileRegisterForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['internal_user_id', 'position', 'team', 'localization']
-        widgets = {
-            'phone': forms.TextInput(attrs={'placeholder': '+48123456789'})
-        }
+        fields = ['internal_user_id']

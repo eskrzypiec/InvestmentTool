@@ -1,0 +1,27 @@
+{% extends "investment_tool/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+        <div class="media">
+            <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
+            <div class="media-body">
+                <h2 class="account-heading">{{ user.username }}</h2>
+                <h4>Imie i nazwisko: {{ user.first_name }} {{ user.last_name }}</h4>
+                <h4>Adres email: {{ user.email }}</h4>
+                <h4>Numer id: {{ user.profile.internal_user_id }}</h4>
+            </div>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <label class="border-bottom mb-4">Edycja profilu</label>
+                {{ p_form|crispy }}
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-lg btn-info btn-main m-2" type="submit" name="button" value="update">Zatwierdź</button>
+                <button class="btn btn-lg btn-info btn-main m-2" type="submit" name="button" value="change_password">Zmień hasło</button>
+            </div>
+        </form>
+    </div>
+{% endblock content %}
