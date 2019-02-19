@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-from .locals import db_pass, db_user
+from .locals import db_pass, db_user, db_host, secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '9kx7pkz-g-v3jrofgb5x#e+3fc^%03h69srx!yl=hok=zgo4c1'
+SECRET_KEY = secret_key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -66,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'investment_tool.context_processors.my_cp',
             ],
         },
     },
@@ -79,7 +80,7 @@ WSGI_APPLICATION = 'tool.wsgi.application'
 
 DATABASES = {
     'default': {
-        'HOST': '127.0.0.1',
+        'HOST': db_host,
         'NAME': 'tool_db',
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'USER': db_user,

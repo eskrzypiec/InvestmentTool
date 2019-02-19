@@ -1,0 +1,36 @@
+{% extends 'investment_tool/base.html' %}
+{% load static %}
+{% block content %}
+
+<h3> Wyniki wyszukiwania <i class="fas fa-search"></i></h3>
+{% if results %}
+<div class="container">
+    <div class="row float-left">
+        <br>
+        <div class="col-md-12">
+            <div>
+                <table class="table colours">
+                    <thead>
+                    <th>Nazwa projektu</th>
+                    <th>Opis projektu</th>
+                    <th>Stworzony przez</th>
+                    </thead>
+                    <tbody>
+                    {% for investment in results %}
+                    <tr>
+                        <td><a href="{% url 'investment-view' investment.id %}">{{ investment.name }}</a></td>
+                        <td>{{ investment.description }}</td>
+                        <td>{{ investment.created_by.first_name }} {{ investment.created_by.last_name }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<p><b>Nie masz żadnych wniosków</b></p>
+{% endif %}
+
+{% endblock content %}

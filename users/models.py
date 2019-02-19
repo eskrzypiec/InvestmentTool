@@ -9,7 +9,7 @@ class Profile(models.Model):
     internal_user_id = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f'{self.user.first_name}, {self.user.last_name} Profile'
+        return f'{self.user.first_name}, {self.user.last_name}'
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
@@ -19,3 +19,6 @@ class Profile(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+
+
+

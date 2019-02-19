@@ -1,0 +1,47 @@
+{% extends 'investment_tool/base.html' %}
+{% load static %}
+{% block content %}
+
+<h3> Inwestycje stworzone przez Ciebie <i class="fas fa-hand-holding-usd"></i></h3>
+{% if user_investments %}
+<div class="container">
+    <div class="row float-left">
+        <br>
+        <div class="col-md-12">
+            <div>
+                <table class="table colours">
+                    <thead>
+                    <th>Nazwa projektu</th>
+                    <th>Opis projektu</th>
+                    <th>Status</th>
+                    <th>Edytuj/Skasuj</th>
+                    </thead>
+                    <tbody>
+                    {% for investment in user_investments %}
+                    <tr>
+                        <td><a href="{% url 'investment-view' investment.id %}">{{ investment.name }}</a></td>
+                        <td>{{ investment.description }}</td>
+                        <td>{% if investment.approved %}
+                            Zaakceptowany
+                            {% else %}
+                            Oczekujący na akceptację
+                            {% endif %}</td>
+                        <td>{% if investment.approved %}
+                            <i class="fas fa-check-circle"></i>
+                            {% else %}
+                            <a href="{% url 'investment-view' investment.id %}" class="fas fa-edit"></a>&nbsp&nbsp&nbsp&nbsp<a
+                                href="{% url 'delete-investment' investment.id %}" class="fas fa-trash-alt"></a>
+                        {% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<p><b>Nie masz żadnych wniosków</b></p>
+{% endif %}
+
+{% endblock content %}

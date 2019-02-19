@@ -13,7 +13,7 @@ ul {
 }
 
 .bg-steel {
-  background-color: #5f788a;
+  background-color: #3f88c5;
 }
 
 .site-header .navbar-nav .nav-link {
@@ -81,4 +81,55 @@ a.article-title:hover {
 
 .account-heading {
   font-size: 2.5rem;
+}
+
+.btn-main {
+    color: #FFFFFF;
+    background-color: #3f88c5;
+    border-color: #3f88c5;
+}
+
+.btn-main:hover,
+.btn-main:focus,
+.btn-main:active,
+.btn-main.active,
+.open .dropdown-toggle.btn-main {
+    color: #FFFFFF;
+    background-color: #3f88c5;
+    border-color: #3f88c5;
+}
+
+.btn-main:active,
+.btn-main.active,
+.open .dropdown-toggle.btn-main {
+    background-image: none;
+}
+
+.btn-main.disabled,
+.btn-main[disabled],
+fieldset[disabled] .btn-main,
+.btn-main.disabled:hover,
+.btn-main[disabled]:hover,
+fieldset[disabled] .btn-main:hover,
+.btn-main.disabled:focus,
+.btn-main[disabled]:focus,
+fieldset[disabled] .btn-main:focus,
+.btn-main.disabled:active,
+.btn-main[disabled]:active,
+fieldset[disabled] .btn-main:active,
+.btn-main.disabled.active,
+.btn-main[disabled].active,
+fieldset[disabled] .btn-main.active {
+    background-color: #3f88c5;
+    border-color: #3f88c5;
+}
+
+.btn-main .badge {
+    color: #3f88c5;
+    background-color: #FFFFFF;
+}
+
+.search {
+    width: 50%;
+    position: relative
 }
