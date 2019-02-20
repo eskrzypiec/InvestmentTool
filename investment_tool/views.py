@@ -29,10 +29,11 @@ class CreateInvestmentView(LoginRequiredMixin, View):
         if form.is_valid():
             name = form.data.get('name')
             description = form.data.get('description')
-            Investment.objects.create(name=name, description=description,
-                                      created_by=request.user)
+            new_investment = Investment.objects.create(name=name, description=description,
+                                                       created_by=request.user)
+            new_investment.save()
             messages.success(request, "Inwestycja została utworzona")
-            return redirect('main')
+            return redirect('investment-view', investment_id=new_investment.id)
         messages.warning(request, "Wprowadzono błędne dane")
         return redirect('main')
 
@@ -416,13 +417,30 @@ class InvestmentAssetsView(LoginRequiredMixin, View):
             form = AddAssetForm(initial={'investment': investment})
 
             if form_post.is_valid():
-                date = form_post.cleaned_data.get('date')
+                purchase_date = form_post.cleaned_data.get('date')
                 name = form_post.cleaned_data.get('name')
                 amount = form_post.cleaned_data.get('amount')
                 depreciation_period = form_post.cleaned_data.get('depreciation_period')
-                new_asset = Asset.objects.create(investment=investment, name=name, date=date, amount=amount,
+                new_asset = Asset.objects.create(investment=investment, name=name, date=purchase_date, amount=amount,
                                                  depreciation_period=depreciation_period)
                 new_asset.save()
+
+                date = purchase_date + relativedelta(months=1)
+                end_date = date + relativedelta(months=depreciation_period * 12 - 1)
+                dates_list = [date]
+
+                while date < end_date:
+                    date += relativedelta(months=1)
+                    if date > end_date:
+                        dates_list.append(end_date)
+                    else:
+                        dates_list.append(date)
+
+                for date in dates_list:
+                    depreciation_amount = amount / (depreciation_period * 12)
+                    new_depreciation = Depreciation.objects.create(amount=depreciation_amount, asset=new_asset,
+                                                                   date=date)
+                    new_depreciation.save()
 
                 messages.success(request, "Informacja została dodana")
             else:
@@ -435,13 +453,13 @@ class InvestmentAssetsView(LoginRequiredMixin, View):
             for asset in assets:
                 sum_of_assets += asset.amount
 
-            return render(request, "investment_tool/investment_implementation.html", {'investment': investment,
-                                                                                      'form': form,
-                                                                                      'costs': costs,
-                                                                                      'total_costs': sum_of_costs,
-                                                                                      'assets': assets,
-                                                                                      'total_assets': sum_of_assets,
-                                                                                      })
+            return render(request, "investment_tool/investment_implementation_asset.html", {'investment': investment,
+                                                                                            'form': form,
+                                                                                            'costs': costs,
+                                                                                            'total_costs': sum_of_costs,
+                                                                                            'assets': assets,
+                                                                                            'total_assets': sum_of_assets,
+                                                                                            })
 
         else:
             raise Http404("Brak uprawnień")
