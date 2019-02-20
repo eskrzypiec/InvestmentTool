@@ -6,9 +6,13 @@
     <div class="media-body">
         <ul class="nav nav-tabs">
             <li class="nav-item"><a class="nav-link active" href="#">Info</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Wdrożenie projektu</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'investment-operating-costs-view' investment.id %}">Koszty operacyjne</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'investment-benefits-view' investment.id %}">Korzyści</a></li>
+            <li class="nav-item"><a class="nav-link"
+                                    href="{% url 'investment-implementation-costs-view' investment.id %}">Wdrożenie
+                projektu</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'investment-operating-costs-view' investment.id %}">Koszty
+                operacyjne</a></li>
+            <li class="nav-item"><a class="nav-link"
+                                    href="{% url 'investment-benefits-view' investment.id %}">Korzyści</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Podsumowanie</a></li>
         </ul>
     </div>
@@ -19,8 +23,8 @@
             <h5> Nazwa projektu: <b>{{ investment.name }}</b></h5>
         </div>
         <p class="article-title">
-        <p class="mr-2">Stworzona przez: {{ investment.created_by.first_name }} {{ investment.created_by.last_name            }}</p>
-        <p class="article-content">Wkład początkowy: {{ investment.initial_investment }}</p>
+        <p class="mr-2"><b>Stworzona przez:</b> {{ investment.created_by.first_name }} {{ investment.created_by.last_name            }}</p>
+        <p class="article-content"><b>Opis:</b> {{ investment.description }}</p>
         </p>
     </div>
 </div>

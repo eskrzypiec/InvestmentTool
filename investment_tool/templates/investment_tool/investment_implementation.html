@@ -6,23 +6,56 @@
     <div class="media-body">
         <ul class="nav nav-tabs">
             <li class="nav-item"><a class="nav-link" href="{% url 'investment-view' investment.id %}">Info</a></li>
-            <li class="nav-item"><a class="nav-link"
-                                    href="{% url 'investment-implementation-costs-view' investment.id %}">Wdrożenie
+            <li class="nav-item"><a class="nav-link active"
+                                    href="#">Wdrożenie
                 projektu</a></li>
-            <li class="nav-item"><a class="nav-link active" href="#">Koszty operacyjne</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'investment-operating-costs-view' investment.id %}">Koszty
+                operacyjne</a></li>
             <li class="nav-item"><a class="nav-link"
                                     href="{% url 'investment-benefits-view' investment.id %}">Korzyści</a></li>
             <li class="nav-item"><a class="nav-link" href="#">Podsumowanie</a></li>
         </ul>
     </div>
     <br>
+
     <div class="media-body">
 
         <div class="article-metadata">
             <h5> Nazwa projektu: <b>{{ investment.name }}</b></h5>
         </div>
+        <br>
         <p class="article-title">
         <table class="table">
+            Środki trwałe / WNiP
+            <thead>
+            <th>Opis</th>
+            <th>Data zakupu</th>
+            <th>Kwota</th>
+            <th>Usuń</th>
+
+            </thead>
+            <tbody>
+            {% for asset in assets %}
+            <tr>
+                <td>{{ asset.name }}</td>
+                <td>{{ asset.date|format_date }}</td>
+                <td>{{ asset.amount }}</td>
+                <td><a href="{% url 'delete-asset' asset.id %}" class="fas fa-trash-alt"></a></td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><b>SUMA:</b></td>
+                <td></td>
+                <td><b>{{ total_assets }}</b></td>
+                <td></td>
+            </tr>
+            </tbody>
+        </table>
+        </p>
+        <br>
+        <p class="article-title">
+        <table class="table">
+            Koszty wdrożenia
             <thead>
             <th>Opis</th>
             <th>Data</th>
@@ -36,26 +69,37 @@
                 <td>{{ cost.name }}</td>
                 <td>{{ cost.date|format_date }}</td>
                 <td>{{ cost.amount }}</td>
-                <td><a href="{% url 'delete-operating-cost' cost.id %}" class="fas fa-trash-alt"></a></td>
+                <td><a href="{% url 'delete-implementation-cost' cost.id %}" class="fas fa-trash-alt"></a></td>
             </tr>
             {% endfor %}
             <tr>
                 <td><b>SUMA:</b></td>
                 <td></td>
-                <td><b>{{ total }}</b></td>
+                <td><b>{{ total_costs }}</b></td>
                 <td></td>
             </tr>
             </tbody>
         </table>
         </p>
+
     </div>
+
+
 </div>
 {% if form %}
 <div class="content-section">
+    <div class="media-body">
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active"
+                                    href="#">Dodaj koszt wdrożenia</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'investment-assets-view' investment.id %}">Dodaj
+                środek trwały/WNiP</a></li>
+        </ul>
+    </div>
+    <br>
     <form method="post">
         {% csrf_token %}
         <fieldset class="form-group">
-            <label class="border-bottom mb-4">Dodaj koszty</label>
             {{ form|crispy }}
         </fieldset>
         <div class="form-group">

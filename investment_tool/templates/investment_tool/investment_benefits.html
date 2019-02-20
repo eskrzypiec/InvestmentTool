@@ -6,7 +6,9 @@
     <div class="media-body">
         <ul class="nav nav-tabs">
             <li class="nav-item"><a class="nav-link" href="{% url 'investment-view' investment.id %}">Info</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Wdrożenie projektu</a></li>
+            <li class="nav-item"><a class="nav-link"
+                                    href="{% url 'investment-implementation-costs-view' investment.id %}">Wdrożenie
+                projektu</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'investment-operating-costs-view' investment.id %}">Koszty
                 operacyjne</a></li>
             <li class="nav-item"><a class="nav-link active" href="#">Korzyści</a></li>
@@ -25,20 +27,23 @@
             <th>Opis</th>
             <th>Data</th>
             <th>Kwota</th>
+            <th>Usuń</th>
 
             </thead>
             <tbody>
             {% for benefit in benefits %}
             <tr>
-                <td>{{ benefit.description }}</td>
+                <td>{{ benefit.name }}</td>
                 <td>{{ benefit.date|format_date }}</td>
                 <td>{{ benefit.amount }}</td>
+                <td><a href="{% url 'delete-benefit' benefit.id %}" class="fas fa-trash-alt"></a></td>
             </tr>
             {% endfor %}
             <tr>
                 <td><b>SUMA:</b></td>
                 <td></td>
                 <td><b>{{ total }}</b></td>
+                <td></td>
             </tr>
             </tbody>
         </table>

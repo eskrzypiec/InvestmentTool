@@ -16,7 +16,7 @@ class Investment(models.Model):
 
 
 class Benefit(models.Model):
-    description = models.TextField()
+    name = models.CharField(max_length=64)
     date = models.DateField()
     investment = models.ForeignKey(Investment, on_delete=models.CASCADE)
     amount = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(0)])
@@ -26,7 +26,7 @@ class Benefit(models.Model):
 
 
 class OperatingCost(models.Model):
-    description = models.TextField()
+    name = models.CharField(max_length=64)
     date = models.DateField()
     investment = models.ForeignKey(Investment, on_delete=models.CASCADE)
     amount = models.DecimalField(decimal_places=2, max_digits=12, validators=[MaxValueValidator(0)])
@@ -36,10 +36,37 @@ class OperatingCost(models.Model):
 
 
 class ImplementationCost(models.Model):
-    description = models.TextField()
+    name = models.CharField(max_length=64)
     date = models.DateField()
     investment = models.ForeignKey(Investment, on_delete=models.CASCADE)
     amount = models.DecimalField(decimal_places=2, max_digits=12, validators=[MaxValueValidator(0)])
 
     def __str__(self):
         return f'Implementation Cost {self.investment} - {self.date}: {self.amount}'
+
+
+class Asset(models.Model):
+    DEPRECIATION_CHOICES = [
+        (1, '1 year'),
+        (2, '2 years'),
+        (5, '5 years'),
+        (10, '10 years'),
+    ]
+
+    name = models.CharField(max_length=64)
+    date = models.DateField()
+    investment = models.ForeignKey(Investment, on_delete=models.CASCADE)
+    amount = models.DecimalField(decimal_places=2, max_digits=12, validators=[MinValueValidator(0)])
+    depreciation_period = models.IntegerField(choices=DEPRECIATION_CHOICES)
+
+    def __str__(self):
+        return f'Asset {self.investment} - {self.date}: {self.amount}'
+
+
+class Depreciation(models.Model):
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE)
+    date = models.DateField()
+    amount = models.DecimalField(decimal_places=2, max_digits=12, validators=[MaxValueValidator(0)])
+
+    def __str__(self):
+        return f'Depreciation of {self.asset} - {self.date}: {self.amount}'

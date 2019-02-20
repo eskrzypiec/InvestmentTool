@@ -5,7 +5,8 @@ from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
-from .forms import CreateInvestmentForm, ApproverForm, AddBenefitForm, AddOperatingCostForm, SearchForm
+from .forms import CreateInvestmentForm, ApproverForm, AddBenefitForm, AddOperatingCostForm, SearchForm, AddAssetForm, \
+    AddImplementationCostForm
 from .models import *
 
 
@@ -149,7 +150,7 @@ class InvestmentBenefitsView(LoginRequiredMixin, View):
             if form_post.is_valid():
                 start_date = form_post.cleaned_data.get('start_date')
                 end_date = form_post.cleaned_data.get('end_date')
-                description = form_post.cleaned_data.get('description')
+                name = form_post.cleaned_data.get('name')
                 amount = form_post.cleaned_data.get('amount')
 
                 if start_date > end_date:
@@ -170,7 +171,7 @@ class InvestmentBenefitsView(LoginRequiredMixin, View):
                         dates_list.append(date)
 
                 for date in dates_list:
-                    new_benefit = Benefit.objects.create(amount=amount, investment=investment, description=description,
+                    new_benefit = Benefit.objects.create(amount=amount, investment=investment, name=name,
                                                          date=date)
                     new_benefit.save()
 
@@ -231,7 +232,7 @@ class InvestmentOperatingCostsView(LoginRequiredMixin, View):
             if form_post.is_valid():
                 start_date = form_post.cleaned_data.get('start_date')
                 end_date = form_post.cleaned_data.get('end_date')
-                description = form_post.cleaned_data.get('description')
+                name = form_post.cleaned_data.get('name')
                 amount = form_post.cleaned_data.get('amount')
 
                 if start_date > end_date:
@@ -254,7 +255,7 @@ class InvestmentOperatingCostsView(LoginRequiredMixin, View):
 
                 for date in dates_list:
                     new_cost = OperatingCost.objects.create(amount=amount, investment=investment,
-                                                            description=description,
+                                                            name=name,
                                                             date=date)
                     new_cost.save()
 
@@ -280,7 +281,170 @@ class InvestmentOperatingCostsView(LoginRequiredMixin, View):
 
 
 class InvestmentImplementationCostsView(LoginRequiredMixin, View):
-    pass
+    def get(self, request, investment_id):
+        investment = get_object_or_404(Investment, id=investment_id)
+        investment_approvers = investment.approver.all()
+        form = AddImplementationCostForm(initial={'investment': investment})
+        costs = ImplementationCost.objects.filter(investment=investment)
+
+        sum_of_costs = 0
+
+        for cost in costs:
+            sum_of_costs += cost.amount
+
+        assets = Asset.objects.filter(investment=investment)
+
+        sum_of_assets = 0
+
+        for asset in assets:
+            sum_of_assets += asset.amount
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            return render(request, "investment_tool/investment_implementation.html", {'investment': investment,
+                                                                                      'form': form,
+                                                                                      'costs': costs,
+                                                                                      'total_costs': sum_of_costs,
+                                                                                      'assets': assets,
+                                                                                      'total_assets': sum_of_assets,
+                                                                                      })
+        else:
+            raise Http404("Brak uprawnień")
+
+    def post(self, request, investment_id):
+
+        investment = get_object_or_404(Investment, id=investment_id)
+        investment_approvers = investment.approver.all()
+
+        costs = ImplementationCost.objects.filter(investment=investment)
+
+        sum_of_costs = 0
+
+        for cost in costs:
+            sum_of_costs += cost.amount
+
+        assets = Asset.objects.filter(investment=investment)
+
+        sum_of_assets = 0
+
+        for asset in assets:
+            sum_of_assets += asset.amounts
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            form_post = AddImplementationCostForm(request.POST)
+            form = AddImplementationCostForm(initial={'investment': investment})
+
+            if form_post.is_valid():
+                date = form_post.cleaned_data.get('date')
+                name = form_post.cleaned_data.get('name')
+                amount = form_post.cleaned_data.get('amount')
+                new_cost = ImplementationCost.objects.create(investment=investment, name=name, date=date, amount=amount)
+                new_cost.save()
+
+                messages.success(request, "Informacja została dodana")
+            else:
+                messages.warning(request, "Podano nieprawidłowe dane")
+
+            costs = ImplementationCost.objects.filter(investment=investment)
+
+            sum_of_costs = 0
+
+            for cost in costs:
+                sum_of_costs += cost.amount
+
+            return render(request, "investment_tool/investment_implementation.html", {'investment': investment,
+                                                                                      'form': form,
+                                                                                      'costs': costs,
+                                                                                      'total_costs': sum_of_costs,
+                                                                                      'assets': assets,
+                                                                                      'total_assets': sum_of_assets,
+                                                                                      })
+
+        else:
+            raise Http404("Brak uprawnień")
+
+
+class InvestmentAssetsView(LoginRequiredMixin, View):
+    def get(self, request, investment_id):
+        investment = get_object_or_404(Investment, id=investment_id)
+        investment_approvers = investment.approver.all()
+        form = AddAssetForm(initial={'investment': investment})
+        costs = ImplementationCost.objects.filter(investment=investment)
+
+        sum_of_costs = 0
+
+        for cost in costs:
+            sum_of_costs += cost.amount
+
+        assets = Asset.objects.filter(investment=investment)
+
+        sum_of_assets = 0
+
+        for asset in assets:
+            sum_of_assets += asset.amount
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            return render(request, "investment_tool/investment_implementation_asset.html", {'investment': investment,
+                                                                                            'form': form,
+                                                                                            'costs': costs,
+                                                                                            'total_costs': sum_of_costs,
+                                                                                            'assets': assets,
+                                                                                            'total_assets': sum_of_assets,
+                                                                                            })
+        else:
+            raise Http404("Brak uprawnień")
+
+    def post(self, request, investment_id):
+        investment = get_object_or_404(Investment, id=investment_id)
+        investment_approvers = investment.approver.all()
+
+        costs = ImplementationCost.objects.filter(investment=investment)
+
+        sum_of_costs = 0
+
+        for cost in costs:
+            sum_of_costs += cost.amount
+
+        assets = Asset.objects.filter(investment=investment)
+
+        sum_of_assets = 0
+
+        for asset in assets:
+            sum_of_assets += asset.amount
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            form_post = AddAssetForm(request.POST)
+            form = AddAssetForm(initial={'investment': investment})
+
+            if form_post.is_valid():
+                date = form_post.cleaned_data.get('date')
+                name = form_post.cleaned_data.get('name')
+                amount = form_post.cleaned_data.get('amount')
+                depreciation_period = form_post.cleaned_data.get('depreciation_period')
+                new_asset = Asset.objects.create(investment=investment, name=name, date=date, amount=amount,
+                                                 depreciation_period=depreciation_period)
+                new_asset.save()
+
+                messages.success(request, "Informacja została dodana")
+            else:
+                messages.warning(request, "Podano nieprawidłowe dane")
+
+            assets = Asset.objects.filter(investment=investment)
+
+            sum_of_assets = 0
+
+            for asset in assets:
+                sum_of_assets += asset.amount
+
+            return render(request, "investment_tool/investment_implementation.html", {'investment': investment,
+                                                                                      'form': form,
+                                                                                      'costs': costs,
+                                                                                      'total_costs': sum_of_costs,
+                                                                                      'assets': assets,
+                                                                                      'total_assets': sum_of_assets,
+                                                                                      })
+
+        else:
+            raise Http404("Brak uprawnień")
 
 
 class SearchProjectView(LoginRequiredMixin, View):
@@ -288,9 +452,11 @@ class SearchProjectView(LoginRequiredMixin, View):
         form = SearchForm(request.POST)
         if form.is_valid():
             search = form.cleaned_data.get('name')
-            results_created = Investment.objects.filter(name__icontains=search, created_by=request.user) | Investment.objects.filter(
+            results_created = Investment.objects.filter(name__icontains=search,
+                                                        created_by=request.user) | Investment.objects.filter(
                 description__icontains=search, created_by=request.user)
-            results_approver = Investment.objects.filter(name__icontains=search, approver=request.user) | Investment.objects.filter(
+            results_approver = Investment.objects.filter(name__icontains=search,
+                                                         approver=request.user) | Investment.objects.filter(
                 description__icontains=search, approver=request.user)
             results = results_created | results_approver
 
@@ -299,3 +465,59 @@ class SearchProjectView(LoginRequiredMixin, View):
         else:
             messages.warning(request, "Brak wyników wyszukiwania")
             return redirect('main')
+
+
+class DeleteBenefitView(LoginRequiredMixin, View):
+    def get(self, request, benefit_id):
+        benefit = get_object_or_404(Benefit, id=benefit_id)
+        investment = get_object_or_404(Investment, id=benefit.investment.id)
+        investment_approvers = investment.approver.all()
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            benefit.delete()
+
+            return redirect('investment-benefits-view', investment_id=investment.id)
+        else:
+            raise Http404("Brak uprawnień")
+
+
+class DeleteOperatingCostView(LoginRequiredMixin, View):
+    def get(self, request, cost_id):
+        cost = get_object_or_404(OperatingCost, id=cost_id)
+        investment = get_object_or_404(Investment, id=cost.investment.id)
+        investment_approvers = investment.approver.all()
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            cost.delete()
+
+            return redirect('investment-operating-costs-view', investment_id=investment.id)
+        else:
+            raise Http404("Brak uprawnień")
+
+
+class DeleteAssetView(LoginRequiredMixin, View):
+    def get(self, request, asset_id):
+        asset = get_object_or_404(Asset, id=asset_id)
+        investment = get_object_or_404(Investment, id=asset.investment.id)
+        investment_approvers = investment.approver.all()
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            asset.delete()
+
+            return redirect('investment-implementation-costs-view', investment_id=investment.id)
+        else:
+            raise Http404("Brak uprawnień")
+
+
+class DeleteImplementationCostView(LoginRequiredMixin, View):
+    def get(self, request, cost_id):
+        cost = get_object_or_404(ImplementationCost, id=cost_id)
+        investment = get_object_or_404(Investment, id=cost.investment.id)
+        investment_approvers = investment.approver.all()
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+            cost.delete()
+
+            return redirect('investment-implementation-costs-view', investment_id=investment.id)
+        else:
+            raise Http404("Brak uprawnień")
