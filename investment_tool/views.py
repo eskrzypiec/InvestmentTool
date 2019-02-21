@@ -86,7 +86,10 @@ class InvestmentView(LoginRequiredMixin, View):
         investment = get_object_or_404(Investment, id=investment_id)
         investment_approvers = investment.approver.all()
         if investment.created_by == request.user or request.user in investment_approvers:
-            form = ApproverForm(initial={'approver': investment_approvers})
+            if not investment.approved:
+                form = ApproverForm(initial={'approver': investment_approvers})
+            else:
+                form = False
 
             return render(request, "investment_tool/investment_view.html", {'investment': investment, 'form': form})
 
@@ -117,7 +120,10 @@ class InvestmentBenefitsView(LoginRequiredMixin, View):
     def get(self, request, investment_id):
         investment = get_object_or_404(Investment, id=investment_id)
         investment_approvers = investment.approver.all()
-        form = AddBenefitForm(initial={'investment': investment})
+        if not investment.approved:
+            form = AddBenefitForm(initial={'investment': investment})
+        else:
+            form = False
 
         benefits = Benefit.objects.filter(investment=investment).order_by('date')
         sum_of_benefits = 0
@@ -197,7 +203,11 @@ class InvestmentOperatingCostsView(LoginRequiredMixin, View):
     def get(self, request, investment_id):
         investment = get_object_or_404(Investment, id=investment_id)
         investment_approvers = investment.approver.all()
-        form = AddOperatingCostForm(initial={'investment': investment})
+        if not investment.approved:
+            form = AddOperatingCostForm(initial={'investment': investment})
+        else:
+            form = False
+
         costs = OperatingCost.objects.filter(investment=investment)
 
         sum_of_costs = 0
@@ -285,7 +295,12 @@ class InvestmentImplementationCostsView(LoginRequiredMixin, View):
     def get(self, request, investment_id):
         investment = get_object_or_404(Investment, id=investment_id)
         investment_approvers = investment.approver.all()
-        form = AddImplementationCostForm(initial={'investment': investment})
+
+        if not investment.approved:
+            form = AddImplementationCostForm(initial={'investment': investment})
+        else:
+            form = False
+
         costs = ImplementationCost.objects.filter(investment=investment)
 
         sum_of_costs = 0
@@ -328,7 +343,7 @@ class InvestmentImplementationCostsView(LoginRequiredMixin, View):
         sum_of_assets = 0
 
         for asset in assets:
-            sum_of_assets += asset.amounts
+            sum_of_assets += asset.amount
 
         if investment.created_by == request.user or request.user in investment_approvers:
             form_post = AddImplementationCostForm(request.POST)
@@ -368,7 +383,11 @@ class InvestmentAssetsView(LoginRequiredMixin, View):
     def get(self, request, investment_id):
         investment = get_object_or_404(Investment, id=investment_id)
         investment_approvers = investment.approver.all()
-        form = AddAssetForm(initial={'investment': investment})
+        if not investment.approved:
+            form = AddAssetForm(initial={'investment': investment})
+        else:
+            form = False
+
         costs = ImplementationCost.objects.filter(investment=investment)
 
         sum_of_costs = 0
