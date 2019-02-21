@@ -184,7 +184,7 @@ class InvestmentBenefitsView(LoginRequiredMixin, View):
 
                 messages.success(request, "Informacja została dodana")
             else:
-                messages.warning(request, "Podano nieprawidłowe dane")
+                form = AddBenefitForm(request.POST)
 
             benefits = Benefit.objects.filter(investment=investment).order_by('date')
             sum_of_benefits = 0
@@ -272,7 +272,7 @@ class InvestmentOperatingCostsView(LoginRequiredMixin, View):
 
                 messages.success(request, "Informacja została dodana")
             else:
-                messages.warning(request, "Podano nieprawidłowe dane")
+                form = AddOperatingCostForm(request.POST)
 
             costs = OperatingCost.objects.filter(investment=investment)
 
@@ -358,7 +358,7 @@ class InvestmentImplementationCostsView(LoginRequiredMixin, View):
 
                 messages.success(request, "Informacja została dodana")
             else:
-                messages.warning(request, "Podano nieprawidłowe dane")
+                form = AddImplementationCostForm(request.POST)
 
             costs = ImplementationCost.objects.filter(investment=investment)
 
@@ -463,7 +463,7 @@ class InvestmentAssetsView(LoginRequiredMixin, View):
 
                 messages.success(request, "Informacja została dodana")
             else:
-                messages.warning(request, "Podano nieprawidłowe dane")
+                form = AddAssetForm(request.POST)
 
             assets = Asset.objects.filter(investment=investment)
 
