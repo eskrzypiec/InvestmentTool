@@ -18,6 +18,8 @@ urlpatterns = [
          name='investment-implementation-costs-view'),
     path('investment_implementation_asset_view/<int:investment_id>/', InvestmentAssetsView.as_view(),
          name='investment-assets-view'),
+    path('investment_summary/<int:investment_id>/', InvestmentSummaryView.as_view(),
+         name='investment-summary'),
     path('search_project/', SearchProjectView.as_view(), name='search-project'),
     path('delete_benefit/<int:benefit_id>/', DeleteBenefitView.as_view(), name='delete-benefit'),
     path('delete_operating_cost/<int:cost_id>/', DeleteOperatingCostView.as_view(), name='delete-operating-cost'),

@@ -7,6 +7,7 @@ FREQUENCY_CHOICES = [
     (0, 'monthly'),
 ]
 
+
 class CreateInvestmentForm(forms.ModelForm):
     class Meta:
         model = Investment

@@ -5,7 +5,7 @@
 <div class="content-section">
     <div class="media-body">
         <ul class="nav nav-tabs">
-            <li class="nav-item"><a class="nav-link active" href="#">Info</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'investment-view' investment.id %}">Info</a></li>
             <li class="nav-item"><a class="nav-link"
                                     href="{% url 'investment-implementation-costs-view' investment.id %}">Wdrożenie
                 projektu</a></li>
@@ -13,7 +13,7 @@
                 operacyjne</a></li>
             <li class="nav-item"><a class="nav-link"
                                     href="{% url 'investment-benefits-view' investment.id %}">Korzyści</a></li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'investment-summary' investment.id %}">Podsumowanie</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#">Podsumowanie</a></li>
         </ul>
     </div>
     <br>
@@ -28,20 +28,5 @@
         </p>
     </div>
 </div>
-
-{% if form %}
-<div class="content-section">
-    <form method="post">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <label class="border-bottom mb-4">Dodaj akceptujących</label>
-            {{ form|crispy }}
-        </fieldset>
-        <div class="form-group">
-            <button class="btn btn-info btn-main" type="submit">Wyślij</button>
-        </div>
-    </form>
-</div>
-{% endif %}
 
 {% endblock %}

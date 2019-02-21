@@ -558,3 +558,16 @@ class DeleteImplementationCostView(LoginRequiredMixin, View):
             return redirect('investment-implementation-costs-view', investment_id=investment.id)
         else:
             raise Http404("Brak uprawnień")
+
+
+class InvestmentSummaryView(LoginRequiredMixin, View):
+    def get(self, request, investment_id):
+        investment = get_object_or_404(Investment, id=investment_id)
+        investment_approvers = investment.approver.all()
+
+        if investment.created_by == request.user or request.user in investment_approvers:
+
+            return render(request, "investment_tool/investment_summary.html", {'investment': investment})
+
+        else:
+            raise Http404("Brak uprawnień")
